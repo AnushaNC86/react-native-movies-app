@@ -114,20 +114,6 @@ const MovieDetails = () => {
           />
           <Text className="text-white font-semibold text-base">Go Back</Text>
         </TouchableOpacity>
-        {/* Add to Favorites Button */}
-        {/* <TouchableOpacity
-          className="flex-1 bg-yellow-600 rounded-lg py-3.5 flex-row items-center justify-center"
-          onPress={() => {
-           
-          }}
-        >
-          <Image
-            source={icons.save} // make sure to import or define this icon in your constants
-            className="size-5 mr-1 mt-0.5"
-            tintColor="#fff"
-          />
-          <Text className="text-white font-semibold text-base">Favorite</Text>
-        </TouchableOpacity> */}
       </View>
     </View>
   );
