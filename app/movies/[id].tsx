@@ -114,12 +114,11 @@ const MovieDetails = () => {
           />
           <Text className="text-white font-semibold text-base">Go Back</Text>
         </TouchableOpacity>
-
         {/* Add to Favorites Button */}
         {/* <TouchableOpacity
           className="flex-1 bg-yellow-600 rounded-lg py-3.5 flex-row items-center justify-center"
           onPress={() => {
-            console.log("Add to Favorites clicked", movie?.title);
+           
           }}
         >
           <Image
