@@ -3,7 +3,8 @@ import { images } from "@/constants/images";
 import { fetchMovies } from "@/services/api";
 import { getTrendingMovies } from "@/services/appWrite";
 import useFetch from "@/services/useFetch";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
+import { useCallback } from "react";
 import { ActivityIndicator, FlatList, Image, Text, View } from "react-native";
 import MovieCard from "../components/MovieCard";
 import SearchBar from "../components/SearchBar";
@@ -16,7 +17,14 @@ export default function Index() {
     data: trendingMovies,
     loading: trendingLoading,
     error: trendingErr,
-  } = useFetch(getTrendingMovies);
+    refetch: fetchTrendingMovies,
+  } = useFetch(() => getTrendingMovies());
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchTrendingMovies();
+    }, [])
+  );
 
   const {
     data: movies,
@@ -49,6 +57,17 @@ export default function Index() {
             ItemSeparatorComponent={() => <View className="w-4" />}
             showsHorizontalScrollIndicator={false}
             className="mb-4 mt-3"
+            ListEmptyComponent={
+              !trendingLoading && !trendingErr ? (
+                <View className="mt-10 px-5">
+                  <Text className="text-center text-gray-500">
+                    {trendingMovies?.length <= 0
+                      ? "You don't have any saved movies yet"
+                      : ""}
+                  </Text>
+                </View>
+              ) : null
+            }
           />
         </View>
       )}

@@ -1,8 +1,11 @@
 import { icons } from "@/constants/icons";
 import { fetchMovieDetails } from "@/services/api";
+import { deleteSavedMovie, isMovieSaved, saveMovie } from "@/services/appWrite";
 import useFetch from "@/services/useFetch";
+import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
+
 import {
   ActivityIndicator,
   Image,
@@ -26,11 +29,47 @@ const MovieInfo = ({ label, value }: MovieInfoProps) => (
 );
 
 const MovieDetails = () => {
+  const [disableSave, setDisableSave] = useState(false);
   const { id } = useLocalSearchParams();
+  const {
+    data: isSaved,
+    loading: savedLoading,
+    error: savedErr,
+    refetch: loadMovies,
+  } = useFetch(() => isMovieSaved(id as string));
+
+  const {
+    loading: unsaveLoading,
+    error: unsaveError,
+    refetch: handleUnsave,
+  } = useFetch(() => deleteSavedMovie(id as string), false);
 
   const { data: movie, loading } = useFetch(() =>
     fetchMovieDetails(id as string)
   );
+
+  const saveMovies = async () => {
+    setDisableSave(true);
+
+    try {
+      await saveMovie(movie); // Assuming this saves the movie to DB
+      await loadMovies(); // Refresh the saved movies list
+    } catch (error) {
+      console.error("Failed to save movie:", error);
+      // Optionally show a toast/snackbar or feedback to the user here
+    } finally {
+      setDisableSave(false); // Ensures button is re-enabled even on error
+    }
+  };
+
+  const deleteFromSaved = async () => {
+    try {
+      await handleUnsave();
+      await loadMovies(); // Refetch saved status
+    } catch (err) {
+      console.error("Failed to unsave movie:", err);
+    }
+  };
 
   return (
     <View className="bg-primary flex-1">
@@ -113,6 +152,25 @@ const MovieDetails = () => {
             tintColor="#fff"
           />
           <Text className="text-white font-semibold text-base">Go Back</Text>
+        </TouchableOpacity>
+        {/* Add to Favorites Button */}
+        <TouchableOpacity
+          className="flex-1 bg-yellow-600 rounded-lg py-3.5 flex-row items-center justify-center"
+          onPress={isSaved ? deleteFromSaved : saveMovies}
+          disabled={disableSave}
+        >
+          <Ionicons
+            name={isSaved ? "bookmark" : "bookmark-outline"}
+            size={20}
+            color="white"
+            className="mr-1"
+          />
+          <Text className="text-white font-semibold text-base">
+            {(() => {
+              if (unsaveLoading || savedLoading) return "Loading...";
+              return isSaved ? "Unsave Movie" : "Save Movie";
+            })()}
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
