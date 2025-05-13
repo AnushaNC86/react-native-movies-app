@@ -48,13 +48,14 @@ export default function Index() {
             Trending Movies
           </Text>
           <FlatList
+            contentContainerStyle={{ paddingRight: 20 }}
             horizontal
             data={trendingMovies}
             renderItem={({ item, index }) => (
               <TrendingCard movie={item} index={index} />
             )}
             keyExtractor={(item) => item.movie_id.toString()}
-            ItemSeparatorComponent={() => <View className="w-4" />}
+            ItemSeparatorComponent={() => <View className="w-8 " />}
             showsHorizontalScrollIndicator={false}
             className="mb-4 mt-3"
             ListEmptyComponent={
